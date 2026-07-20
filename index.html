@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anand Dubey — Full-Stack Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F1EA;
+    --ink:#0B0B0C;
+    --orange:#FF4405;
+    --green:#0FFF6B;
+    --paper:#FFFFFF;
+    --line:#0B0B0C;
+    --muted:#5b5952;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+    cursor:default;
+  }
+
+  ::selection{ background:var(--orange); color:var(--paper); }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  img{ max-width:100%; display:block; }
+
+  /* ============ SCROLLBAR ============ */
+  ::-webkit-scrollbar{ width:12px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:var(--ink); border:3px solid var(--bg); }
+
+  /* ============ PRELOADER ============ */
+  #preloader{
+    position:fixed; inset:0; z-index:9999;
+    background:var(--ink);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:transform .8s cubic-bezier(.77,0,.18,1);
+  }
+  #preloader.done{ transform:translateY(-100%); }
+  #preloader .pl-num{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(4rem, 14vw, 9rem);
+    color:var(--bg);
+    line-height:1;
+    letter-spacing:-2px;
+  }
+  #preloader .pl-label{
+    color:var(--orange);
+    font-size:.8rem;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    margin-top:.5rem;
+  }
+  #preloader .pl-bar-track{
+    width:min(60vw,420px);
+    height:6px;
+    background:#2a2a2a;
+    margin-top:2rem;
+    position:relative;
+    overflow:hidden;
+  }
+  #preloader .pl-bar-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0%;
+    background:var(--orange);
+  }
+
+  body.locked{ height:100vh; overflow:hidden; }
+
+  /* ============ AMBIENT CURSOR GLOW ============ */
+  #glow{
+    position:fixed;
+    width:420px; height:420px;
+    border-radius:50%;
+    pointer-events:none;
+    background:radial-gradient(circle, rgba(255,68,5,0.16) 0%, rgba(255,68,5,0) 70%);
+    transform:translate(-50%,-50%);
+    z-index:1;
+    filter:blur(10px);
+    will-change:transform;
+    display:none;
+  }
+
+  /* ============ LAYOUT HELPERS ============ */
+  .wrap{
+    width:100%;
+    max-width:1400px;
+    margin:0 auto;
+    padding:0 6vw;
+  }
+
+  section{ position:relative; z-index:2; }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    color:var(--orange);
+    display:inline-flex;
+    align-items:center;
+    gap:.6em;
+    margin-bottom:1.2rem;
+  }
+  .eyebrow::before{
+    content:'';
+    width:28px; height:2px;
+    background:var(--orange);
+    display:inline-block;
+  }
+
+  /* ============ HEADER ============ */
+  header{
+    position:fixed; top:0; left:0; right:0;
+    z-index:100;
+    padding:1.4rem 6vw;
+    display:flex; align-items:center; justify-content:space-between;
+    background:transparent;
+    border-bottom:3px solid transparent;
+    transition:background .3s ease, border-color .3s ease, padding .3s ease;
+  }
+  header.scrolled{
+    background:var(--bg);
+    border-bottom:3px solid var(--ink);
+    padding:1rem 6vw;
+  }
+  .logo{
+    font-weight:700;
+    font-size:1.3rem;
+    letter-spacing:-.5px;
+  }
+  .logo span{ color:var(--orange); }
+  nav ul{
+    list-style:none;
+    display:flex;
+    gap:2.4rem;
+  }
+  nav a{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    position:relative;
+    padding-bottom:4px;
+  }
+  nav a::after{
+    content:'';
+    position:absolute; left:0; bottom:0;
+    width:0%; height:2px;
+    background:var(--orange);
+    transition:width .25s ease;
+  }
+  nav a:hover::after{ width:100%; }
+  .nav-toggle{ display:none; }
+
+  /* ============ HERO ============ */
+  .hero{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:7fr 5fr;
+    align-items:end;
+    padding-top:9rem;
+    padding-bottom:4rem;
+    border-bottom:4px solid var(--ink);
+  }
+  .hero-left{ grid-column:1/2; }
+  .hero-index{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    color:var(--muted);
+    margin-bottom:1.5rem;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 7vw, 6rem);
+    font-weight:700;
+    line-height:.98;
+    letter-spacing:-3px;
+    text-transform:uppercase;
+  }
+  .hero h1 .last{ -webkit-text-stroke:2px var(--ink); color:var(--bg); }
+
+  .type-row{
+    margin-top:1.6rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(1rem, 2.2vw, 1.4rem);
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+  }
+  .type-row .tag{
+    background:var(--ink); color:var(--bg);
+    padding:.15em .5em;
+    font-size:.7em;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+  }
+  #typewriter{ color:var(--orange); font-weight:600; }
+  .cursor-blink{
+    display:inline-block; width:2px; height:1em;
+    background:var(--ink);
+    animation:blink 1s steps(1) infinite;
+    transform:translateY(2px);
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-right{
+    grid-column:2/3;
+    border-left:3px solid var(--ink);
+    padding-left:2.4rem;
+    display:flex; flex-direction:column; gap:1.2rem;
+  }
+  .hero-right p{
+    font-size:1rem;
+    line-height:1.6;
+    color:var(--muted);
+  }
+  .hero-cta{
+    display:flex; gap:1rem; flex-wrap:wrap;
+    margin-top:.6rem;
+  }
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    padding:.95em 1.6em;
+    border:3px solid var(--ink);
+    background:var(--ink);
+    color:var(--bg);
+    cursor:pointer;
+    transition:transform .15s ease, background .15s ease, color .15s ease;
+    display:inline-flex; align-items:center; gap:.6em;
+  }
+  .btn:hover{ transform:translate(-3px,-3px); box-shadow:5px 5px 0 var(--orange); }
+  .btn.ghost{ background:transparent; color:var(--ink); }
+  .btn.ghost:hover{ box-shadow:5px 5px 0 var(--ink); background:var(--orange); border-color:var(--ink); color:var(--ink); }
+
+  .hero-tags{
+    display:flex; flex-wrap:wrap; gap:.6rem;
+    margin-top:1rem;
+  }
+  .hero-tags span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    border:1.5px solid var(--ink);
+    padding:.35em .7em;
+    text-transform:uppercase;
+  }
+
+  /* ============ MARQUEE ============ */
+  .marquee{
+    border-bottom:4px solid var(--ink);
+    background:var(--ink);
+    color:var(--bg);
+    overflow:hidden;
+    white-space:nowrap;
+    padding:.9rem 0;
+  }
+  .marquee-track{
+    display:inline-flex;
+    animation:marquee 22s linear infinite;
+  }
+  .marquee-track span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    text-transform:uppercase;
+    letter-spacing:.15em;
+    padding:0 2rem;
+    display:inline-flex; align-items:center; gap:2rem;
+  }
+  .marquee-track span::after{ content:'◆'; color:var(--orange); }
+  @keyframes marquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%); } }
+
+  /* ============ REVEAL ============ */
+  .reveal{
+    opacity:0;
+    transform:translateY(40px);
+    transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal.d1{ transition-delay:.08s; }
+  .reveal.d2{ transition-delay:.16s; }
+  .reveal.d3{ transition-delay:.24s; }
+  .reveal.d4{ transition-delay:.32s; }
+
+  /* ============ SECTION TITLES ============ */
+  .sec-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    flex-wrap:wrap; gap:1rem;
+    padding:5rem 0 3rem;
+    border-bottom:3px solid var(--ink);
+    margin-bottom:3rem;
+  }
+  .sec-head h2{
+    font-size:clamp(2rem, 5vw, 3.4rem);
+    font-weight:700;
+    letter-spacing:-1.5px;
+    text-transform:uppercase;
+  }
+  .sec-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    color:var(--muted);
+  }
+
+  /* ============ ABOUT ============ */
+  .about{ padding-bottom:5rem; border-bottom:4px solid var(--ink); }
+  .about-grid{
+    display:grid;
+    grid-template-columns:5fr 7fr;
+    gap:3rem;
+  }
+  .about-photo{
+    border:3px solid var(--ink);
+    aspect-ratio:4/5;
+    background:
+      linear-gradient(135deg, var(--orange) 0%, var(--orange) 100%);
+    position:relative;
+    display:flex; align-items:flex-end;
+    padding:1.4rem;
+  }
+  .about-photo::before{
+    content:'';
+    position:absolute; inset:14px;
+    border:2px solid var(--ink);
+  }
+  .about-photo .ph-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    background:var(--ink);
+    color:var(--bg);
+    padding:.5em .8em;
+    z-index:2;
+  }
+  .about-text p{
+    font-size:1.15rem;
+    line-height:1.75;
+    margin-bottom:1.4rem;
+    color:var(--ink);
+  }
+  .about-text strong{ color:var(--orange); }
+  .about-facts{
+    margin-top:2rem;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem 2rem;
+    border-top:2px solid var(--ink);
+    padding-top:1.6rem;
+  }
+  .fact dt{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:var(--muted);
+  }
+  .fact dd{ font-weight:600; margin-top:.2rem; }
+
+  /* ============ STATS ============ */
+  .stats{
+    padding:4.5rem 0;
+    border-bottom:4px solid var(--ink);
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+  }
+  .stat{
+    padding:1rem 1.8rem;
+    border-left:3px solid var(--ink);
+  }
+  .stat:first-child{ border-left:none; padding-left:0; }
+  .stat .num{
+    font-size:clamp(2.4rem, 5vw, 4rem);
+    font-weight:700;
+    letter-spacing:-2px;
+    color:var(--orange);
+    line-height:1;
+  }
+  .stat .lbl{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin-top:.6rem;
+    color:var(--muted);
+  }
+
+  /* ============ EXPERIENCE ============ */
+  .exp{ padding-bottom:5rem; border-bottom:4px solid var(--ink); }
+  .exp-item{
+    display:grid;
+    grid-template-columns:2.5fr 3fr 6.5fr;
+    gap:2rem;
+    padding:2.2rem 0;
+    border-top:2px solid var(--ink);
+    align-items:start;
+  }
+  .exp-item:last-child{ border-bottom:2px solid var(--ink); }
+  .exp-date{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    color:var(--muted);
+  }
+  .exp-role h3{
+    font-size:1.3rem;
+    font-weight:700;
+    letter-spacing:-.5px;
+  }
+  .exp-role .co{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    color:var(--orange);
+    margin-top:.3rem;
+  }
+  .exp-desc ul{ list-style:none; }
+  .exp-desc li{
+    position:relative;
+    padding-left:1.4rem;
+    margin-bottom:.6rem;
+    line-height:1.6;
+    color:var(--ink);
+  }
+  .exp-desc li::before{
+    content:'▸';
+    position:absolute; left:0; color:var(--orange);
+  }
+  .exp-tags{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.9rem; }
+  .exp-tags span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.68rem;
+    border:1.5px solid var(--ink);
+    padding:.3em .6em;
+    text-transform:uppercase;
+  }
+
+  /* ============ PROJECTS ============ */
+  .projects{ padding-bottom:5rem; border-bottom:4px solid var(--ink); }
+  .proj-grid{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:2px;
+    background:var(--ink);
+    border:3px solid var(--ink);
+  }
+  .proj-card{
+    background:var(--bg);
+    padding:2.4rem;
+    display:flex; flex-direction:column;
+    justify-content:space-between;
+    min-height:340px;
+    grid-column:span 3;
+    transition:background .25s ease;
+  }
+  .proj-card:hover{ background:var(--paper); }
+  .proj-card:nth-child(1){ grid-column:span 4; }
+  .proj-card:nth-child(2){ grid-column:span 2; }
+  .proj-card:nth-child(3){ grid-column:span 6; }
+
+  .proj-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .proj-idx{ font-family:'IBM Plex Mono', monospace; color:var(--muted); font-size:.82rem; }
+  .proj-link{
+    width:38px; height:38px;
+    border:2px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem;
+    transition:background .2s ease, transform .2s ease, color .2s ease;
+  }
+  .proj-card a.proj-link:hover{ background:var(--orange); transform:rotate(45deg); }
+
+  .proj-card h3{
+    font-size:clamp(1.3rem, 2.4vw, 1.9rem);
+    font-weight:700;
+    letter-spacing:-.5px;
+    margin-top:1.4rem;
+  }
+  .proj-card p{
+    margin-top:.8rem;
+    color:var(--muted);
+    line-height:1.6;
+    font-size:.98rem;
+  }
+  .proj-tags{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem; }
+  .proj-tags span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.68rem;
+    background:var(--ink);
+    color:var(--bg);
+    padding:.3em .6em;
+  }
+
+  /* ============ SKILLS ============ */
+  .skills{ padding-bottom:5rem; border-bottom:4px solid var(--ink); }
+  .skills-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:0;
+    border-top:2px solid var(--ink);
+    border-left:2px solid var(--ink);
+  }
+  .skill-col{
+    border-right:2px solid var(--ink);
+    border-bottom:2px solid var(--ink);
+    padding:1.8rem;
+  }
+  .skill-col h4{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--orange);
+    margin-bottom:1rem;
+  }
+  .skill-col ul{ list-style:none; }
+  .skill-col li{
+    font-weight:500;
+    padding:.4rem 0;
+    border-top:1px dashed #ccc8bb;
+  }
+  .skill-col li:first-child{ border-top:none; }
+
+  /* ============ CONTACT ============ */
+  .contact{ padding-bottom:6rem; }
+  .contact-grid{
+    display:grid;
+    grid-template-columns:5fr 7fr;
+    gap:3rem;
+  }
+  .contact-info h2{
+    font-size:clamp(2.2rem, 6vw, 4rem);
+    font-weight:700;
+    letter-spacing:-2px;
+    line-height:1.05;
+    text-transform:uppercase;
+  }
+  .contact-info h2 span{ color:var(--orange); }
+  .contact-info p{ margin-top:1.2rem; color:var(--muted); line-height:1.7; max-width:36ch; }
+  .contact-links{ margin-top:2rem; display:flex; flex-direction:column; gap:.9rem; }
+  .contact-links a{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.95rem;
+    display:inline-flex; align-items:center; gap:.6em;
+    width:fit-content;
+    border-bottom:2px solid transparent;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .contact-links a:hover{ border-color:var(--orange); color:var(--orange); }
+
+  form{ border:3px solid var(--ink); padding:2.4rem; background:var(--paper); }
+  .field{ margin-bottom:1.4rem; }
+  .field label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    display:block;
+    margin-bottom:.5rem;
+    color:var(--muted);
+  }
+  .field input, .field textarea{
+    width:100%;
+    border:2px solid var(--ink);
+    background:transparent;
+    padding:.85em 1em;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:1rem;
+    color:var(--ink);
+    outline:none;
+    resize:none;
+    transition:box-shadow .2s ease;
+  }
+  .field input:focus, .field textarea:focus{ box-shadow:4px 4px 0 var(--orange); }
+
+  .submit-btn{
+    width:100%;
+    justify-content:center;
+    margin-top:.4rem;
+  }
+  .submit-btn.sent{ background:var(--green); color:var(--ink); border-color:var(--ink); }
+  .spinner{
+    width:14px; height:14px;
+    border:2.5px solid var(--bg);
+    border-top-color:transparent;
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    display:none;
+  }
+  .submit-btn.loading .spinner{ display:inline-block; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ============ FOOTER ============ */
+  footer{
+    padding:2.4rem 6vw;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .to-top{
+    width:44px; height:44px;
+    border:2px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .to-top:hover{ background:var(--orange); transform:translateY(-4px); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px){
+    nav ul{ display:none; }
+    .hero{ grid-template-columns:1fr; }
+    .hero-right{ border-left:none; border-top:3px solid var(--ink); padding-left:0; padding-top:1.6rem; margin-top:1.6rem; }
+    .about-grid{ grid-template-columns:1fr; }
+    .stats{ grid-template-columns:1fr 1fr; }
+    .stat:nth-child(3){ border-left:none; }
+    .exp-item{ grid-template-columns:1fr; gap:.6rem; }
+    .proj-grid{ grid-template-columns:1fr; }
+    .proj-card, .proj-card:nth-child(1), .proj-card:nth-child(2), .proj-card:nth-child(3){ grid-column:span 1; }
+    .skills-grid{ grid-template-columns:1fr 1fr; }
+    .contact-grid{ grid-template-columns:1fr; }
+    #glow{ display:none !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  }
+</style>
+</head>
+<body class="locked">
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="pl-num mono" id="pl-num">0%</div>
+  <div class="pl-label">Loading Portfolio</div>
+  <div class="pl-bar-track"><div class="pl-bar-fill" id="pl-bar"></div></div>
+</div>
+
+<!-- AMBIENT GLOW -->
+<div id="glow"></div>
+
+<!-- HEADER -->
+<header id="site-header">
+  <div class="logo">AD<span>.</span></div>
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <a href="#contact" class="btn" style="padding:.7em 1.3em;">Hire Me</a>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="hero-left">
+      <div class="hero-index mono">Portfolio / 2026</div>
+      <h1>Anand<br>Dubey<br><span class="last">Builds.</span></h1>
+      <div class="type-row">
+        <span class="tag">I am a</span>
+        <span id="typewriter"></span><span class="cursor-blink"></span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <p>Computer Science student from Kadodara, Gujarat, turning React components and Node APIs into real-time products — chat apps, note tools, and secure file utilities.</p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn">View Work →</a>
+        <a href="#contact" class="btn ghost">Get In Touch</a>
+      </div>
+      <div class="hero-tags">
+        <span>React</span><span>Node.js</span><span>MongoDB</span><span>Firebase</span><span>Flask</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee">
+    <div class="marquee-track mono">
+      <span>Full-Stack Developer</span><span>Kadodara, Gujarat</span><span>React · Node · Express</span><span>Available For Work</span>
+      <span>Full-Stack Developer</span><span>Kadodara, Gujarat</span><span>React · Node · Express</span><span>Available For Work</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" class="about wrap">
+    <div class="sec-head reveal">
+      <h2>About Me</h2>
+      <div class="sec-num mono">01 / About</div>
+    </div>
+    <div class="about-grid">
+      <div class="about-photo reveal">
+        <span class="ph-label mono">Anand Dubey</span>
+      </div>
+      <div class="about-text reveal d1">
+        <p>I'm a <strong>Computer Science undergraduate</strong> at Uka Tarsadia University, currently pursuing my B.Tech in CSE with a focus on building interactive, scalable web applications from the ground up.</p>
+        <p>My path runs through two internships — first at <strong>CodeAlpha</strong>, where I built responsive components with React and MongoDB, and more recently a 3-month stint at <strong>Krtya Technologies</strong>, integrating frontend and backend systems for real-world products.</p>
+        <p>Outside of coursework, I ship side projects: a real-time chat app with WebRTC calling, a note-taking tool, and a Flask-based file encryption utility. I like software that's fast to use and honest about what it's doing.</p>
+        <dl class="about-facts">
+          <div class="fact"><dt class="mono">Location</dt><dd>Kadodara, Gujarat, India</dd></div>
+          <div class="fact"><dt class="mono">Education</dt><dd>B.Tech CSE, 2023–2027</dd></div>
+          <div class="fact"><dt class="mono">CGPA</dt><dd>7.34</dd></div>
+          <div class="fact"><dt class="mono">Languages</dt><dd>Hindi, English</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats wrap">
+    <div class="stat reveal"><div class="num" data-target="3">0</div><div class="lbl">Projects Built</div></div>
+    <div class="stat reveal d1"><div class="num" data-target="2">0</div><div class="lbl">Internships</div></div>
+    <div class="stat reveal d2"><div class="num" data-target="8">0</div><div class="lbl">Tech Stacks Used</div></div>
+    <div class="stat reveal d3"><div class="num" data-target="1200">0</div><div class="lbl">Coding Hours</div></div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="exp wrap">
+    <div class="sec-head reveal">
+      <h2>Experience</h2>
+      <div class="sec-num mono">02 / Work</div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date mono">Jan 2026 — Apr 2026</div>
+      <div class="exp-role">
+        <h3>Intern Full-Stack Developer</h3>
+        <div class="co">Krtya Technologies Pvt. Ltd. — Surat, Gujarat</div>
+      </div>
+      <div class="exp-desc">
+        <ul>
+          <li>Completed a comprehensive 3-month internship focused on full-stack web development.</li>
+          <li>Collaborated with the development team to build, test, and deploy interactive web applications.</li>
+          <li>Gained hands-on experience integrating frontend and backend systems to improve UX and scalability.</li>
+        </ul>
+        <div class="exp-tags"><span>Full-Stack</span><span>Deployment</span><span>Teamwork</span></div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date mono">2025</div>
+      <div class="exp-role">
+        <h3>Web Developer Intern</h3>
+        <div class="co">CodeAlpha — Remote</div>
+      </div>
+      <div class="exp-desc">
+        <ul>
+          <li>Developed responsive web components and contributed to real-world projects.</li>
+          <li>Worked across the stack with React, Express, and MongoDB.</li>
+        </ul>
+        <div class="exp-tags"><span>React</span><span>MongoDB</span><span>Express</span><span>Node.js</span><span>Tailwind CSS</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="projects wrap">
+    <div class="sec-head reveal">
+      <h2>Selected Projects</h2>
+      <div class="sec-num mono">03 / Work</div>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-card reveal">
+        <div class="proj-top">
+          <span class="proj-idx">P-01</span>
+          <span class="proj-link">↗</span>
+        </div>
+        <div>
+          <h3>AR Chats</h3>
+          <p>A real-time chat and calling web app with direct messaging, live user status, and WebRTC voice calls — plus an admin dashboard with graphical analytics for monitoring platform activity.</p>
+        </div>
+        <div class="proj-tags"><span>Tailwind CSS</span><span>Firebase</span><span>WebRTC</span><span>JavaScript</span></div>
+      </div>
+
+      <div class="proj-card reveal d1">
+        <div class="proj-top">
+          <span class="proj-idx">P-02</span>
+          <a class="proj-link" href="https://github.com/anand9913/ardnotes" target="_blank" rel="noopener">↗</a>
+        </div>
+        <div>
+          <h3>ARDNotes</h3>
+          <p>A dynamic note-taking app built for efficient data management and seamless user interaction, with a clean UI and persistent storage.</p>
+        </div>
+        <div class="proj-tags"><span>JavaScript</span><span>UI/UX</span></div>
+      </div>
+
+      <div class="proj-card reveal d2">
+        <div class="proj-top">
+          <span class="proj-idx">P-03</span>
+          <a class="proj-link" href="https://github.com/anand9913/file-encrypt-decrypt" target="_blank" rel="noopener">↗</a>
+        </div>
+        <div>
+          <h3>File Encrypt-Decrypt Tool</h3>
+          <p>A web-based secure file encryption and decryption application built to protect data privacy and integrity, with secure file handling accessible through a responsive web interface.</p>
+        </div>
+        <div class="proj-tags"><span>Python</span><span>Flask</span><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="skills wrap">
+    <div class="sec-head reveal">
+      <h2>Skills &amp; Tools</h2>
+      <div class="sec-num mono">04 / Stack</div>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-col">
+        <h4>Languages</h4>
+        <ul><li>HTML / CSS</li><li>JavaScript</li><li>TypeScript</li><li>Java</li><li>Python</li><li>C</li></ul>
+      </div>
+      <div class="skill-col">
+        <h4>Frameworks</h4>
+        <ul><li>React</li><li>Next.js</li><li>Node.js</li><li>Express</li><li>Flask</li><li>Tailwind CSS</li></ul>
+      </div>
+      <div class="skill-col">
+        <h4>Databases</h4>
+        <ul><li>MySQL</li><li>MongoDB</li><li>Firebase</li></ul>
+      </div>
+      <div class="skill-col">
+        <h4>Tools</h4>
+        <ul><li>Git / GitHub</li><li>Postman</li><li>Docker</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact wrap">
+    <div class="sec-head reveal">
+      <h2>Contact</h2>
+      <div class="sec-num mono">05 / Reach Out</div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h2>Let's Build<br>Something <span>Real.</span></h2>
+        <p>Open to internships, junior full-stack roles, and freelance web projects. Send a message and I'll get back to you.</p>
+        <div class="contact-links">
+          <a href="mailto:23amtics399@gmail.com">✉ 23amtics399@gmail.com</a>
+          <a href="tel:+919913748011">☎ +91 9913748011</a>
+          <a href="#">◎ Kadodara, Gujarat, India</a>
+        </div>
+      </div>
+      <form id="contact-form" class="reveal d1">
+        <div class="field">
+          <label class="mono" for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Your full name" required>
+        </div>
+        <div class="field">
+          <label class="mono" for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label class="mono" for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..." required></textarea>
+        </div>
+        <button type="submit" class="btn submit-btn" id="submit-btn">
+          <span class="spinner"></span>
+          <span class="btn-text">Send Message</span>
+        </button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div>© 2026 Anand Dubey. All rights reserved.</div>
+  <a href="#" class="to-top" id="to-top">↑</a>
+  <div>Built with HTML, CSS &amp; JS</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= PRELOADER ================= */
+  var pct = 0;
+  var plNum = document.getElementById('pl-num');
+  var plBar = document.getElementById('pl-bar');
+  var preloader = document.getElementById('preloader');
+
+  var loadInterval = setInterval(function(){
+    var increment = Math.floor(Math.random() * 9) + 3;
+    pct = Math.min(100, pct + increment);
+    plNum.textContent = pct + '%';
+    plBar.style.width = pct + '%';
+    if(pct >= 100){
+      clearInterval(loadInterval);
+      setTimeout(function(){
+        preloader.classList.add('done');
+        document.body.classList.remove('locked');
+        setTimeout(function(){ preloader.style.display = 'none'; }, 850);
+      }, 300);
+    }
+  }, 110);
+
+  /* ================= AMBIENT MOUSE GLOW ================= */
+  var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  var glow = document.getElementById('glow');
+  if(!isTouch && glow){
+    glow.style.display = 'block';
+    window.addEventListener('mousemove', function(e){
+      glow.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px) translate(-50%,-50%)';
+    });
+  }
+
+  /* ================= STICKY HEADER ================= */
+  var header = document.getElementById('site-header');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 50){
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  });
+
+  /* ================= TYPEWRITER ================= */
+  var roles = ['Full Stack Developer', 'UI Designer', 'React Engineer', 'Problem Solver'];
+  var twEl = document.getElementById('typewriter');
+  var roleIndex = 0, charIndex = 0, deleting = false;
+
+  function typeLoop(){
+    var current = roles[roleIndex];
+    if(!deleting){
+      charIndex++;
+      twEl.textContent = current.slice(0, charIndex);
+      if(charIndex === current.length){
+        deleting = true;
+        setTimeout(typeLoop, 1400);
+        return;
+      }
+    } else {
+      charIndex--;
+      twEl.textContent = current.slice(0, charIndex);
+      if(charIndex === 0){
+        deleting = false;
+        roleIndex = (roleIndex + 1) % roles.length;
+      }
+    }
+    setTimeout(typeLoop, deleting ? 40 : 85);
+  }
+  typeLoop();
+
+  /* ================= SCROLL REVEAL ================= */
+  var revealEls = document.querySelectorAll('.reveal');
+  var revealObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el){ revealObserver.observe(el); });
+
+  /* ================= NUMBER COUNTERS ================= */
+  var counters = document.querySelectorAll('.stat .num');
+  var counterObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        animateCounter(entry.target);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  counters.forEach(function(el){ counterObserver.observe(el); });
+
+  function animateCounter(el){
+    var target = parseInt(el.getAttribute('data-target'), 10);
+    var duration = 1600;
+    var startTime = null;
+
+    function step(timestamp){
+      if(!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target);
+      if(progress < 1){
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = target;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ================= CONTACT FORM SIMULATION ================= */
+  var form = document.getElementById('contact-form');
+  var submitBtn = document.getElementById('submit-btn');
+  var btnText = submitBtn.querySelector('.btn-text');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(submitBtn.classList.contains('loading')) return;
+
+    submitBtn.classList.add('loading');
+    btnText.textContent = 'Sending...';
+
+    setTimeout(function(){
+      submitBtn.classList.remove('loading');
+      submitBtn.classList.add('sent');
+      btnText.textContent = 'Sent!';
+
+      setTimeout(function(){
+        submitBtn.classList.remove('sent');
+        btnText.textContent = 'Send Message';
+        form.reset();
+      }, 1800);
+    }, 1500);
+  });
+
+  /* ================= BACK TO TOP ================= */
+  document.getElementById('to-top').addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ================= NAV SMOOTH SCROLL (in case of hash anchors) ================= */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href');
+      if(id.length > 1){
+        var target = document.querySelector(id);
+        if(target){
+          e.preventDefault();
+          window.scrollTo({ top: target.offsetTop - 70, behavior: 'smooth' });
+        }
+      }
+    });
+  });
+
+})();
+
+/* ================= CHATBOT INJECTION ================= */
+(function(){
+  window.addEventListener('load', function(){
+    if(window.chatbase) return;
+    var script = document.createElement('script');
+    script.src = 'https://www.chatbase.co/embed.min.js';
+    script.defer = true;
+    script.id = 'chatbase-embed-script';
+    document.body.appendChild(script);
+  });
+})();
+</script>
+</body>
+</html>
